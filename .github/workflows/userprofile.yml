@@ -49,7 +49,7 @@ jobs:
       run: |
         cd apis/userprofile
         docker login docker.pkg.github.com --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }}
-        docker build -t cdennig/openhackteam4/userprofile:${{ github.sha }} .
+        docker build -t docker.pkg.github.com/cdennig/openhackteam4/userprofile:${{ github.sha }} .
         docker push docker.pkg.github.com/cdennig/openhackteam4/userprofile:${{ github.sha }}
     # - name: Push to GitHub Packages
     #   uses: docker/build-push-action@v1
