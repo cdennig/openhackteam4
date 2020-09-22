@@ -65,17 +65,17 @@ jobs:
              {
                  "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
                  "value": "${{ secrets.PULL_PWD }}",
-                 "slotSetting": false
+                 "slotSetting": true
              },
              {
                  "name": "DOCKER_REGISTRY_SERVER_URL",
                  "value": "https://docker.pkg.github.com",
-                 "slotSetting": false
+                 "slotSetting": true
              },
              {
                  "name": "DOCKER_REGISTRY_SERVER_USERNAME",
                  "value": "${{ github.actor }}",
-                 "slotSetting": false
+                 "slotSetting": true
              }
          ]
     - uses: azure/webapps-deploy@v2
