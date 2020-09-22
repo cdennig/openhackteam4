@@ -33,7 +33,11 @@ jobs:
         fi
 
     - name: Build
-      run: go run main.go
+      run: |
+        cd apis/trips
+        go run main.go
 
     - name: Test
-      run: go test
+      run: |
+        cd apis/trips
+        go test
