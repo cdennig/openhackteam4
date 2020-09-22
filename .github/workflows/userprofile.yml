@@ -52,13 +52,33 @@ jobs:
         docker login docker.pkg.github.com --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }}
         docker build -t docker.pkg.github.com/cdennig/openhackteam4/userprofile:${{ github.sha }} .
         docker push docker.pkg.github.com/cdennig/openhackteam4/userprofile:${{ github.sha }}
-    # - name: Push to GitHub Packages
-    #   uses: docker/build-push-action@v1
-    #   with:
-    #     context: /home/runner/work/openhackteam4/openhackteam4/apis/userprofile
-    #     file: /home/runner/work/openhackteam4/openhackteam4/apis/userprofile/Dockerfile
-    #     username: ${{ github.actor }}
-    #     password: ${{ secrets.GITHUB_TOKEN }}
-    #     registry: docker.pkg.github.com
-    #     repository: cdennig/openhackteam4/userprofile
-    #     tags: ${{ github.sha }}
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Set Web App CR authentication
+      uses: Azure/appservice-settings@v1
+      with:
+       app-name: 'openhackf4r03460userprofile'
+       app-settings-json: |
+         [
+             {
+                 "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+                 "value": "${{ secrets.GITHUB_TOKEN }}",
+                 "slotSetting": false
+             },
+             {
+                 "name": "DOCKER_REGISTRY_SERVER_URL",
+                 "value": "docker.pkg.github.com",
+                 "slotSetting": false
+             },
+             {
+                 "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+                 "value": "${{ github.actor }}",
+                 "slotSetting": false
+             }
+         ]
+    - uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'openhackf4r03460userprofile'
+        images: 'docker.pkg.github.com/cdennig/openhackteam4/userprofile:${{ github.sha }}'
