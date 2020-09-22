@@ -22,5 +22,5 @@ jobs:
       with:
         java-version: 1.8
     - name: Build with Maven
-      run:  mvn -B package --file apis/user-java/pom.xml
+      run:  mvn -B package --file apis/user-java/pom.xml ;
             mvn test
