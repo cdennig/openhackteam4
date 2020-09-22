@@ -34,7 +34,7 @@ Test('/user', function (t) {
         t.test('test getAllUsers get operation', function (t) {
             Mockgen().requests({
                 path: '/user',
-                operation: 'get'
+                operation: 'head'
             }, function (err, mock) {
                 var request;
                 t.error(err);
