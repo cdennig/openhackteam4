@@ -83,10 +83,9 @@ jobs:
         app-name: 'openhackf4r03460userprofile'
         slot-name: 'staging'
         images: 'docker.pkg.github.com/cdennig/openhackteam4/userprofile:${{ github.sha }}'
-    - run: sleep 20
     - name: Swap slots
       uses: azure/CLI@v1
       with:
         azcliversion: 2.11.1
         inlineScript: |
-          az webapp deployment slot auto-swap --name openhackf4r03460userprofile --resource-group openhackf4r03460rg --slot staging
+          az webapp deployment slot swap --name openhackf4r03460userprofile --resource-group openhackf4r03460rg --slot staging --target-slot production
