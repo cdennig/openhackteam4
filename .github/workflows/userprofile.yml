@@ -16,7 +16,8 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    env:
+        working-directory: ./apis/userprofile
     strategy:
       matrix:
         node-version: [12.x]
@@ -46,6 +47,7 @@ jobs:
             body: body
           });
     - name: Build & Push Image
+      working-directory: ${{ env.working-directory }}
       run: |
         cd apis/userprofile
         docker login docker.pkg.github.com --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }}
