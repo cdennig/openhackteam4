@@ -49,8 +49,8 @@ jobs:
     - name: Push to GitHub Packages
       uses: docker/build-push-action@v1
       with:
-        context: apis/userprofile
-        file: apis/userprofile/Dockerfile
+        context: /home/runner/work/openhackteam4/openhackteam4/apis/userprofile
+        file: /home/runner/work/openhackteam4/openhackteam4/apis/userprofile/Dockerfile
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: docker.pkg.github.com
