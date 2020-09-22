@@ -83,6 +83,7 @@ jobs:
         app-name: 'openhackf4r03460userprofile'
         slot-name: 'staging'
         images: 'docker.pkg.github.com/cdennig/openhackteam4/userprofile:${{ github.sha }}'
+    - run: sleep 20
     - name: Swap slots
       uses: azure/CLI@v1
       with:
