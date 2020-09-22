@@ -25,7 +25,7 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --configuration Release --no-restore ./api/poi/poi.sln
+      run: dotnet build --configuration Release --no-restore api/poi/poi.sln
     - working-directory: ${{env.working-directory}} 
       name: Test
       run: dotnet test --no-restore --verbosity normal
