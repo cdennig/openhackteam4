@@ -54,4 +54,4 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: docker.pkg.github.com
         repository: cdennig/openhackteam4/userprofile
-        tags: userprofile:${{ github.sha }}
+        tags: ${{ github.sha }}
