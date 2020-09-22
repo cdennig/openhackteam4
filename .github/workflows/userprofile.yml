@@ -45,14 +45,19 @@ jobs:
             title: "${{ env.build_name }} Workflow ${{ github.run_number }} Failed! ",
             body: body
           });
-    - run: pwd
-    - name: Push to GitHub Packages
-      uses: docker/build-push-action@v1
-      with:
-        context: /home/runner/work/openhackteam4/openhackteam4/apis/userprofile
-        file: /home/runner/work/openhackteam4/openhackteam4/apis/userprofile/Dockerfile
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-        registry: docker.pkg.github.com
-        repository: cdennig/openhackteam4/userprofile
-        tags: ${{ github.sha }}
+    - name: Build & Push Image
+      run: |
+        cd apis/userprofile
+        docker login docker.pkg.github.com --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }}
+        docker build -t cdennig/openhackteam4/userprofile:${{ github.sha }} .
+        docker push cdennig/openhackteam4/userprofile:${{ github.sha }}
+    # - name: Push to GitHub Packages
+    #   uses: docker/build-push-action@v1
+    #   with:
+    #     context: /home/runner/work/openhackteam4/openhackteam4/apis/userprofile
+    #     file: /home/runner/work/openhackteam4/openhackteam4/apis/userprofile/Dockerfile
+    #     username: ${{ github.actor }}
+    #     password: ${{ secrets.GITHUB_TOKEN }}
+    #     registry: docker.pkg.github.com
+    #     repository: cdennig/openhackteam4/userprofile
+    #     tags: ${{ github.sha }}
