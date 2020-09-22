@@ -4,8 +4,8 @@
 name: Node.js CI
 
 on:
-  # push:
-  #   branches: [ master ]
+  push:
+    branches: [ testdeploy ]
   pull_request:
     branches: [ master ]
     paths: 
@@ -45,3 +45,13 @@ jobs:
             title: "${{ env.build_name }} Workflow ${{ github.run_number }} Failed! ",
             body: body
           });
+    - name: Push to GitHub Packages
+      uses: docker/build-push-action@v1
+      with:
+        context: apis/userprofile
+        file:  apis/userprofile/Dockerfile
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        registry: docker.pkg.github.com
+        repository: cdennig/openhackteam4/userprofile
+        tag_with_ref: true
