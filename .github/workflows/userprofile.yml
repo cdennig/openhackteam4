@@ -81,4 +81,5 @@ jobs:
     - uses: azure/webapps-deploy@v2
       with:
         app-name: 'openhackf4r03460userprofile'
+        slot-name: 'openhackf4r03460userprofile-staging'
         images: 'docker.pkg.github.com/cdennig/openhackteam4/userprofile:${{ github.sha }}'
