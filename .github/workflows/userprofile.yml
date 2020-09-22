@@ -49,7 +49,8 @@ jobs:
       uses: docker/build-push-action@v1
       with:
         workdir: apis/userprofile
-        # file: apis/userprofile/Dockerfile
+        context: apis/userprofile
+        file: apis/userprofile/Dockerfile
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: docker.pkg.github.com
