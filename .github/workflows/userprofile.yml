@@ -45,6 +45,7 @@ jobs:
             title: "${{ env.build_name }} Workflow ${{ github.run_number }} Failed! ",
             body: body
           });
+    - run: pwd
     - name: Push to GitHub Packages
       uses: docker/build-push-action@v1
       with:
