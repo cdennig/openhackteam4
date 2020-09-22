@@ -48,10 +48,10 @@ jobs:
     - name: Push to GitHub Packages
       uses: docker/build-push-action@v1
       with:
-        context: ./apis/userprofile
-        file:  ./apis/userprofile/Dockerfile
+        context: apis/userprofile
+        file: apis/userprofile/Dockerfile
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: docker.pkg.github.com
-        repository: cdennig/openhackteam4/userprofile
-        tag_with_ref: true
+        repository: cdennig/openhackteam4/userprofile:${{ github.sha }}
+        tag_with_ref: false
