@@ -14,7 +14,7 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      working-directory: apis/poi
+      working-directory: apis/poi/web
 
     steps:
     - uses: actions/checkout@v2
@@ -22,11 +22,12 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.301
+    - name: show folder
+      run: pwd
+    - working-directory: ${{env.working-directory}}
     - name: Install dependencies
       run: dotnet restore
     - working-directory: ${{env.working-directory}}
-    - name: show folder
-      run: pwd
     - name: Build
       run: dotnet build --configuration Release --no-restore apis/poi/poi.sln
     - working-directory: ${{env.working-directory}} 
