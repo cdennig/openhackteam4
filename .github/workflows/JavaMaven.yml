@@ -21,6 +21,6 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-    - name: Build with Maven
+    - name: Build_and_Test_with_Maven
       run:  mvn -B package --file apis/user-java/pom.xml ;
             mvn test --file apis/user-java/pom.xml
