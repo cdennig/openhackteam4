@@ -53,5 +53,5 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: docker.pkg.github.com
-        repository: cdennig/openhackteam4/userprofile:${{ github.sha }}
-        tag_with_ref: false
+        repository: cdennig/openhackteam4/userprofile
+        tags: userprofile:${{ github.sha }}
