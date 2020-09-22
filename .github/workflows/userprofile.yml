@@ -48,9 +48,9 @@ jobs:
     - name: Push to GitHub Packages
       uses: docker/build-push-action@v1
       with:
-        workdir: apis/userprofile
-        context: .
-        file: ./Dockerfile
+        # workdir: /github/workspace/apis/userprofile
+        context: /github/workspace/apis/userprofile
+        file: /github/workspace/apis/userprofile/Dockerfile
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: docker.pkg.github.com
