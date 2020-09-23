@@ -29,7 +29,7 @@ do
       echo "$timestamp | $status | $endpoint " 
     fi 
     
-    if [ $status -eq 200 ]; then
+    if [ $status -eq 300 ]; then
       ((status200count=status200count + 1))
 
       if [ $status200count -gt 5 ]; then
@@ -45,6 +45,7 @@ if [ $status200count -gt 5 ]; then
   echo "API UP"
   # APISTATUS is a pipeline variable
   APISTATUS="Up"
+  exit 0;
 else
   echo "API DOWN"
   APISTATUS="Down"
