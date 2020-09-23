@@ -45,6 +45,7 @@ if [ $status200count -gt 5 ]; then
   echo "API UP"
   # APISTATUS is a pipeline variable
   APISTATUS="Up"
+  exit 0;
 else
   echo "API DOWN"
   APISTATUS="Down"
