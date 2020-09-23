@@ -84,6 +84,7 @@ jobs:
       uses: Azure/appservice-settings@v1
       with:
        app-name: ${{ env.app-name }}
+       slot-name: 'staging'
        app-settings-json: |
          [
              {
