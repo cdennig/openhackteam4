@@ -4,8 +4,11 @@
 name: Node.js CI
 
 on:
-  # push:
-  #   branches: [ master ]
+  push:
+    branches: [ master ]
+    paths: 
+      - 'apis/userprofile/**'
+      - '.github/workflows/userprofile.yml'
   pull_request:
     branches: [ master ]
     paths: 
@@ -13,10 +16,10 @@ on:
       - '.github/workflows/userprofile.yml'
     
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
-
+    env:
+        working-directory: ./apis/userprofile
     strategy:
       matrix:
         node-version: [12.x]
@@ -45,3 +48,57 @@ jobs:
             title: "${{ env.build_name }} Workflow ${{ github.run_number }} Failed! ",
             body: body
           });
+  build:
+    needs: [test]
+    runs-on: ubuntu-latest
+    env:
+        working-directory: ./apis/userprofile
+        app-name: openhackf4r03460userprofile
+        image-name: userprofile
+        container-registry: docker.pkg.github.com
+    if: github.ref == 'refs/heads/master'
+    steps:
+    - uses: actions/checkout@v2    
+    - name: Build & Push Image
+      working-directory: ${{ env.working-directory }}
+      run: |
+        docker login ${{ env.container-registry }} --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }}
+        docker build -t ${{ env.container-registry }}/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }} .
+        docker push ${{ env.container-registry }}/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }}
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Set Web App CR authentication
+      uses: Azure/appservice-settings@v1
+      with:
+       app-name: ${{ env.app-name }}
+       app-settings-json: |
+         [
+             {
+                 "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+                 "value": "${{ secrets.PULL_PWD }}",
+                 "slotSetting": false
+             },
+             {
+                 "name": "DOCKER_REGISTRY_SERVER_URL",
+                 "value": "https://${{ env.container-registry }}",
+                 "slotSetting": false
+             },
+             {
+                 "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+                 "value": "${{ github.actor }}",
+                 "slotSetting": false
+             }
+         ]
+    - uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.app-name }}
+        # slot-name: 'staging'
+        images: '${{ env.container-registry }}/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }}'
+    # - name: Swap slots
+    #   uses: azure/CLI@v1
+    #   with:
+    #     azcliversion: 2.11.1
+    #     inlineScript: |
+    #       az webapp deployment slot swap --name openhackf4r03460userprofile --resource-group openhackf4r03460rg --slot staging --target-slot production
