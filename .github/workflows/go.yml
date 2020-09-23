@@ -13,7 +13,6 @@ on:
       - '.github/workflows/go.yml'
 
 jobs:
-
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -75,7 +74,18 @@ jobs:
       run: |
         docker login ${{ env.container-registry }} --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }}
         docker build -t ${{ env.container-registry }}/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }} .
-        docker push ${{ env.container-registry }}/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }}
+        docker push ${{ env.container-registry }}/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }};
+  staging:
+    needs: [build]
+    runs-on: ubuntu-latest
+    env:
+      app-name: openhackf4r03460trips
+      image-name: trips
+      container-registry: docker.pkg.github.com
+      docker-username: "cdennig"
+    if: github.ref == 'refs/heads/master'
+    steps:
+    - uses: actions/checkout@v2  
     - name: 'Login via Azure CLI'
       uses: azure/login@v1
       with:
@@ -83,28 +93,73 @@ jobs:
     - name: Set Web App CR authentication
       uses: Azure/appservice-settings@v1
       with:
-       app-name: ${{ env.app-name }}
-       slot-name: 'staging'
-       app-settings-json: |
-         [
-             {
-                 "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
-                 "value": "${{ secrets.PULL_PWD }}",
-                 "slotSetting": true
-             },
-             {
-                 "name": "DOCKER_REGISTRY_SERVER_URL",
-                 "value": "https://${{ env.container-registry }}",
-                 "slotSetting": true
-             },
-             {
-                 "name": "DOCKER_REGISTRY_SERVER_USERNAME",
-                 "value": "${{ env.docker-username }}",
-                 "slotSetting": true
-             }
-         ]
+        app-name: ${{ env.app-name }}
+        slot-name: 'staging'
+        app-settings-json: |
+          [
+              {
+                  "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+                  "value": "${{ secrets.PULL_PWD }}",
+                  "slotSetting": true
+              },
+              {
+                  "name": "DOCKER_REGISTRY_SERVER_URL",
+                  "value": "https://${{ env.container-registry }}",
+                  "slotSetting": true
+              },
+              {
+                  "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+                  "value": "${{ env.docker-username }}",
+                  "slotSetting": true
+              }
+          ]
     - uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.app-name }}
         slot-name: 'staging'
         images: '${{ env.container-registry }}/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }}'
+    - name: staging healt check
+      run: |
+        ./test.sh https://openhackf4r03460trips-staging.azurewebsites.net/api/healthcheck/trips
+    - uses: actions/github-script@0.9.0
+      if: failure()
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          let body = "${{ env.build_name }} Worflow Failure \n Build Number: ${{ github.run_number }} \n Build Log: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }} \n SHA: [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }}) \n";
+          github.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: "${{ env.build_name }} Workflow ${{ github.run_number }} Failed! Error in staging slot of API.",
+            body: body
+          });
+  production:
+    needs: [staging]
+    runs-on: ubuntu-latest
+    env:   
+      app-name: openhackf4r03460trips
+      image-name: trips
+      container-registry: docker.pkg.github.com
+      docker-username: "cdennig" 
+    steps:
+    - uses: actions/checkout@v2      
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}  
+    - name: Swap slots
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.11.1
+        inlineScript: |
+          az webapp deployment slot swap --name openhackf4r03460userprofile --resource-group openhackf4r03460rg --slot staging --target-slot production
+    - name: Production healt check
+      run: |
+        ./test.sh https://openhackf4r03460trips.azurewebsites.net/api/healthcheck/trips
+    - name: Rollback
+      if: ${{ failure() }}
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.11.1
+        inlineScript: |
+          az webapp deployment slot swap --name openhackf4r03460userprofile --resource-group openhackf4r03460rg --slot staging --target-slot production
