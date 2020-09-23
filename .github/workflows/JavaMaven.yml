@@ -39,7 +39,7 @@ jobs:
             body: body
           });
 
-  build:
+  staging:
     needs: [test]
     runs-on: ubuntu-latest
     env:
