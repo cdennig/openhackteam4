@@ -1,6 +1,3 @@
-# This workflow will build a Java project with Maven
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
-
 name: Java CI with Maven
 
 on:
@@ -9,12 +6,15 @@ on:
     paths: 
       - 'apis/user-java/**'
       - '.github/workflows/JavaMaven.yml'
+  pull_request:
+    branches: [ master ]
+    paths: 
+      - 'apis/user-java/**'
+      - '.github/workflows/JavaMaven.yml'
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 1.8
@@ -38,3 +38,60 @@ jobs:
             title: "${{ env.build_name }} Workflow ${{ github.run_number }} Failed! ",
             body: body
           });
+
+  build:
+    needs: [test]
+    runs-on: ubuntu-latest
+    env:
+        working-directory: ./apis/user-java
+        app-name: openhackf4r03460user-java
+        image-name: user-java
+        container-registry: docker.pkg.github.com
+        docker-username: "cdennig"
+    if: github.ref == 'refs/heads/master'
+    steps:
+    - uses: actions/checkout@v2    
+    - name: Build & Push Image
+      working-directory: ${{ env.working-directory }}
+      run: |
+        docker login ${{ env.container-registry }} --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }}
+        docker build -t ${{ env.container-registry }}/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }} .
+        docker push ${{ env.container-registry }}/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }}
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Set Web App CR authentication
+      uses: Azure/appservice-settings@v1
+      with:
+       app-name: ${{ env.app-name }}
+       app-settings-json: |
+         [
+             {
+                 "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+                 "value": "${{ secrets.PULL_PWD }}",
+                 "slotSetting": false
+             },
+             {
+                 "name": "DOCKER_REGISTRY_SERVER_URL",
+                 "value": "https://${{ env.container-registry }}",
+                 "slotSetting": false
+             },
+             {
+                 "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+                 "value": "${{ env.docker-username }}",
+                 "slotSetting": false
+             }
+         ]
+    - uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.app-name }}
+        # slot-name: 'staging'
+        images: '${{ env.container-registry }}/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }}'
+    # - name: Swap slots
+    #   uses: azure/CLI@v1
+    #   with:
+    #     azcliversion: 2.11.1
+    #     inlineScript: |
+    #       az webapp deployment slot swap --name openhackf4r03460trips --resource-group openhackf4r03460rg --slot staging --target-slot production
+        
