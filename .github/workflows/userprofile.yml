@@ -88,7 +88,7 @@ jobs:
     - uses: azure/webapps-deploy@v2
       with:
         app-name: 'openhackf4r03460userprofile'
-        slot-name: 'staging'
+        # slot-name: 'staging'
         images: 'docker.pkg.github.com/cdennig/openhackteam4/userprofile:${{ github.sha }}'
     # - name: Swap slots
     #   uses: azure/CLI@v1
