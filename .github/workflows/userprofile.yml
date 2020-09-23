@@ -5,7 +5,7 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ testdeploy ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
     paths: 
@@ -50,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
         working-directory: ./apis/userprofile
-    if: github.ref == 'refs/heads/testdeploy'
+    if: github.ref == 'refs/heads/master'
     steps:
     - uses: actions/checkout@v2    
     - name: Build & Push Image
