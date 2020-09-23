@@ -98,6 +98,8 @@ jobs:
         app-name: ${{ env.app-name }}
         slot-name: 'staging'
         images: '${{ env.container-registry }}/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }}'
+    - name: Staging healthy?
+      run: ./test.sh https://openhackf4r03460userprofile-staging.azurewebsites.net/api/healthcheck/user
     # - name: Swap slots
     #   uses: azure/CLI@v1
     #   with:
