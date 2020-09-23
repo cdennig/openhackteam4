@@ -95,7 +95,7 @@ jobs:
     - uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.app-name }}
-        # slot-name: 'staging'
+        slot-name: 'staging'
         images: '${{ env.container-registry }}/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }}'
     # - name: Swap slots
     #   uses: azure/CLI@v1
