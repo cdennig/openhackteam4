@@ -120,7 +120,6 @@ jobs:
         image-name: userprofile
         container-registry: docker.pkg.github.com
         docker-username: "cdennig"
-    # if: ${{ success() }}
     steps:
     - uses: actions/checkout@v2        
     - name: Swap slots
