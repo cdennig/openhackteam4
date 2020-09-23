@@ -23,8 +23,7 @@ module.exports = {
                 next(err);
                 return;
             }
-            // res.status(status).send(data && data.responses);
-            res.status(400);
+            res.status(status).send(data && data.responses);
         });
     }
 };
