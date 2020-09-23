@@ -74,7 +74,7 @@ jobs:
       run: |
         docker login ${{ env.container-registry }} --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }}
         docker build -t ${{ env.container-registry }}/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }} .
-        docker push ${{ env.container-registry }}/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }}
+        docker push ${{ env.container-registry }}/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }};
     staging:
       needs: [build]
       runs-on: ubuntu-latest
