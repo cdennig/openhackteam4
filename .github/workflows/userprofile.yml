@@ -76,6 +76,7 @@ jobs:
         docker-username: "cdennig"
     if: github.ref == 'refs/heads/master'
     steps:
+    - uses: actions/checkout@v2  
     - name: 'Login via Azure CLI'
       uses: azure/login@v1
       with:
@@ -120,7 +121,8 @@ jobs:
         container-registry: docker.pkg.github.com
         docker-username: "cdennig"
     # if: ${{ success() }}
-    steps:      
+    steps:
+    - uses: actions/checkout@v2        
     - name: Swap slots
       uses: azure/CLI@v1
       with:
