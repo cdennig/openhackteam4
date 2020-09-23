@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
         working-directory: ./apis/user-java
-        app-name: openhackf4r03460user-java
+        app-name: openhackf4r03460userjava
         image-name: user-java
         container-registry: docker.pkg.github.com
         docker-username: "cdennig"
