@@ -52,15 +52,16 @@ jobs:
         working-directory: ./apis/userprofile
         app-name: openhackf4r03460userprofile
         image-name: userprofile
+        container-registry: docker.pkg.github.com
     if: github.ref == 'refs/heads/master'
     steps:
     - uses: actions/checkout@v2    
     - name: Build & Push Image
       working-directory: ${{ env.working-directory }}
       run: |
-        docker login docker.pkg.github.com --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }}
-        docker build -t docker.pkg.github.com/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }} .
-        docker push docker.pkg.github.com/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }}
+        docker login ${{ env.container-registry }} --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }}
+        docker build -t ${{ env.container-registry }}/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }} .
+        docker push ${{ env.container-registry }}/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }}
     - name: 'Login via Azure CLI'
       uses: azure/login@v1
       with:
@@ -78,7 +79,7 @@ jobs:
              },
              {
                  "name": "DOCKER_REGISTRY_SERVER_URL",
-                 "value": "https://docker.pkg.github.com",
+                 "value": "https://${{ env.container-registry }}",
                  "slotSetting": false
              },
              {
@@ -91,7 +92,7 @@ jobs:
       with:
         app-name: ${{ env.app-name }}
         # slot-name: 'staging'
-        images: 'docker.pkg.github.com/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }}'
+        images: '${{ env.container-registry }}/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }}'
     # - name: Swap slots
     #   uses: azure/CLI@v1
     #   with:
