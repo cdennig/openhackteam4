@@ -113,7 +113,7 @@ jobs:
     #     azcliversion: 2.11.1
     #     inlineScript: |
     #       az webapp deployment slot swap --name openhackf4r03460trips --resource-group openhackf4r03460rg --slot staging --target-slot production
-  Validate Staging:
+  Validate-Staging:
     needs: [build]
     runs-on: ubuntu-latest
     - uses: azure/CLI@v1
