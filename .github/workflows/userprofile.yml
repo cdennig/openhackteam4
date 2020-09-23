@@ -13,8 +13,7 @@ on:
       - '.github/workflows/userprofile.yml'
     
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
     env:
         working-directory: ./apis/userprofile
@@ -46,12 +45,19 @@ jobs:
             title: "${{ env.build_name }} Workflow ${{ github.run_number }} Failed! ",
             body: body
           });
+  build:
+    runs-on: ubuntu-latest
+    env:
+        working-directory: ./apis/userprofile
+    if: github.ref == 'refs/heads/master'
+    steps:
+    - uses: actions/checkout@v2    
     - name: Build & Push Image
       working-directory: ${{ env.working-directory }}
       run: |
         docker login docker.pkg.github.com --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }}
-        docker build -t docker.pkg.github.com/cdennig/openhackteam4/userprofile:${{ github.sha }} .
-        docker push docker.pkg.github.com/cdennig/openhackteam4/userprofile:${{ github.sha }}
+        docker build -t docker.pkg.github.com/cdennig/openhackteam4/userprofile:${{ github.GITHUB_RUN_ID }} .
+        docker push docker.pkg.github.com/cdennig/openhackteam4/userprofile:${{ github.GITHUB_RUN_ID }}
     - name: 'Login via Azure CLI'
       uses: azure/login@v1
       with:
@@ -83,9 +89,9 @@ jobs:
         app-name: 'openhackf4r03460userprofile'
         slot-name: 'staging'
         images: 'docker.pkg.github.com/cdennig/openhackteam4/userprofile:${{ github.sha }}'
-    - name: Swap slots
-      uses: azure/CLI@v1
-      with:
-        azcliversion: 2.11.1
-        inlineScript: |
-          az webapp deployment slot swap --name openhackf4r03460userprofile --resource-group openhackf4r03460rg --slot staging --target-slot production
+    # - name: Swap slots
+    #   uses: azure/CLI@v1
+    #   with:
+    #     azcliversion: 2.11.1
+    #     inlineScript: |
+    #       az webapp deployment slot swap --name openhackf4r03460userprofile --resource-group openhackf4r03460rg --slot staging --target-slot production
