@@ -142,24 +142,24 @@ jobs:
       container-registry: docker.pkg.github.com
       docker-username: "cdennig" 
   steps:
-  - uses: actions/checkout@v2      
-  - name: 'Login via Azure CLI'
-    uses: azure/login@v1
-    with:
-      creds: ${{ secrets.AZURE_CREDENTIALS }}  
-  - name: Swap slots
-    uses: azure/CLI@v1
-    with:
-      azcliversion: 2.11.1
-      inlineScript: |
-        az webapp deployment slot swap --name openhackf4r03460userprofile --resource-group openhackf4r03460rg --slot staging --target-slot production
-  - name: Production healt check
-    run: |
-      ./test.sh https://openhackf4r03460trips.azurewebsites.net/api/healthcheck/trips
-  - name: Rollback
-    if: ${{ failure() }}
-    uses: azure/CLI@v1
-    with:
-      azcliversion: 2.11.1
-      inlineScript: |
-        az webapp deployment slot swap --name openhackf4r03460userprofile --resource-group openhackf4r03460rg --slot staging --target-slot production
+    - uses: actions/checkout@v2      
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}  
+    - name: Swap slots
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.11.1
+        inlineScript: |
+          az webapp deployment slot swap --name openhackf4r03460userprofile --resource-group openhackf4r03460rg --slot staging --target-slot production
+    - name: Production healt check
+      run: |
+        ./test.sh https://openhackf4r03460trips.azurewebsites.net/api/healthcheck/trips
+    - name: Rollback
+      if: ${{ failure() }}
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.11.1
+        inlineScript: |
+          az webapp deployment slot swap --name openhackf4r03460userprofile --resource-group openhackf4r03460rg --slot staging --target-slot production
