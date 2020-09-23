@@ -141,7 +141,7 @@ jobs:
       image-name: trips
       container-registry: docker.pkg.github.com
       docker-username: "cdennig" 
-  steps:
+    steps:
     - uses: actions/checkout@v2      
     - name: 'Login via Azure CLI'
       uses: azure/login@v1
