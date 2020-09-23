@@ -29,7 +29,7 @@ do
       echo "$timestamp | $status | $endpoint " 
     fi 
     
-    if [ $status -eq 300 ]; then
+    if [ $status -eq 200 ]; then
       ((status200count=status200count + 1))
 
       if [ $status200count -gt 5 ]; then
