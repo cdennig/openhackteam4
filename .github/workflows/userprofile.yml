@@ -49,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
         working-directory: ./apis/userprofile
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/testdeploy'
     steps:
     - uses: actions/checkout@v2    
     - name: Build & Push Image
