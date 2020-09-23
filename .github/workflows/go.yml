@@ -84,7 +84,6 @@ jobs:
       uses: Azure/appservice-settings@v1
       with:
        app-name: ${{ env.app-name }}
-       slot-name: 'staging'
        app-settings-json: |
          [
              {
@@ -107,67 +106,4 @@ jobs:
       with:
         app-name: ${{ env.app-name }}
         slot-name: 'staging'
-        images: '${{ env.container-registry }}/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }}';
-    # - name: Swap slots
-    #   uses: azure/CLI@v1
-    #   with:
-    #     azcliversion: 2.11.1
-    #     inlineScript: |
-    #       az webapp deployment slot swap --name openhackf4r03460trips --resource-group openhackf4r03460rg --slot staging --target-slot production
-  Validate-Staging:
-    needs: [build]
-    runs-on: ubuntu-latest
-    - uses: azure/CLI@v1
-      with:
-        azcliversion: 2.11.1
-        inlineScript: |
-          declare -i duration=10
-          declare hasUrl=""
-          declare endpoint
-          declare -i status200count=0
-
-          endpoint="https://openhackf4r03460trips-staging.azurewebsites.net/api/healthcheck/poi"
-
-          healthcheck() {
-              declare url=$1
-              result=$(curl -i $url 2>/dev/null | grep HTTP/1.1)
-              echo $result
-          }
-
-          for i in {1..12}
-          do
-            result=`healthcheck $endpoint` 
-            declare status
-            if [[ -z $result ]]; then 
-              status="N/A"
-              echo "Site not found"
-            else
-              status=${result:9:3}
-              timestamp=$(date "+%Y%m%d-%H%M%S")
-              if [[ -z $hasUrl ]]; then
-                echo "$timestamp | $status "
-              else
-                echo "$timestamp | $status | $endpoint " 
-              fi 
-              
-              if [ $status -eq 200 ]; then
-                ((status200count=status200count + 1))
-
-                if [ $status200count -gt 5 ]; then
-                    break
-                fi
-              fi
-
-              sleep $duration
-            fi
-          done
-
-          if [ $status200count -gt 5 ]; then
-            echo "API UP"
-            # APISTATUS is a pipeline variable
-            APISTATUS="Up"
-          else
-            echo "API DOWN"
-            APISTATUS="Down"
-            exit 1;
-          fi
+        images: '${{ env.container-registry }}/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }}'
