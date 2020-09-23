@@ -93,26 +93,26 @@ jobs:
     - name: Set Web App CR authentication
       uses: Azure/appservice-settings@v1
       with:
-      app-name: ${{ env.app-name }}
-      slot-name: 'staging'
-      app-settings-json: |
-        [
-            {
-                "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
-                "value": "${{ secrets.PULL_PWD }}",
-                "slotSetting": true
-            },
-            {
-                "name": "DOCKER_REGISTRY_SERVER_URL",
-                "value": "https://${{ env.container-registry }}",
-                "slotSetting": true
-            },
-            {
-                "name": "DOCKER_REGISTRY_SERVER_USERNAME",
-                "value": "${{ env.docker-username }}",
-                "slotSetting": true
-            }
-        ]
+        app-name: ${{ env.app-name }}
+        slot-name: 'staging'
+        app-settings-json: |
+          [
+              {
+                  "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+                  "value": "${{ secrets.PULL_PWD }}",
+                  "slotSetting": true
+              },
+              {
+                  "name": "DOCKER_REGISTRY_SERVER_URL",
+                  "value": "https://${{ env.container-registry }}",
+                  "slotSetting": true
+              },
+              {
+                  "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+                  "value": "${{ env.docker-username }}",
+                  "slotSetting": true
+              }
+          ]
     - uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.app-name }}
