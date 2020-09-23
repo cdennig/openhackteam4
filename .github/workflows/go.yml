@@ -1,12 +1,11 @@
 name: Go
-#go
+
 on:
-  push:
-    branches: [ master ]
   pull_request:
     branches: [ master ]
     paths: 
       - 'apis/trips/**'
+      - '.github/workflows/go.yml'
 
 jobs:
 
@@ -35,7 +34,8 @@ jobs:
     - name: Build
       run: |
         cd apis/trips
-        go run main.go
+        go build
+
 
     - name: Test
       run: |
