@@ -84,22 +84,23 @@ jobs:
       uses: Azure/appservice-settings@v1
       with:
        app-name: ${{ env.app-name }}
+       slot-name: 'staging'
        app-settings-json: |
          [
              {
                  "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
                  "value": "${{ secrets.PULL_PWD }}",
-                 "slotSetting": false
+                 "slotSetting": true
              },
              {
                  "name": "DOCKER_REGISTRY_SERVER_URL",
                  "value": "https://${{ env.container-registry }}",
-                 "slotSetting": false
+                 "slotSetting": true
              },
              {
                  "name": "DOCKER_REGISTRY_SERVER_USERNAME",
                  "value": "${{ env.docker-username }}",
-                 "slotSetting": false
+                 "slotSetting": true
              }
          ]
     - uses: azure/webapps-deploy@v2
@@ -107,10 +108,3 @@ jobs:
         app-name: ${{ env.app-name }}
         slot-name: 'staging'
         images: '${{ env.container-registry }}/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }}'
-    # - name: Swap slots
-    #   uses: azure/CLI@v1
-    #   with:
-    #     azcliversion: 2.11.1
-    #     inlineScript: |
-    #       az webapp deployment slot swap --name openhackf4r03460trips --resource-group openhackf4r03460rg --slot staging --target-slot production
-        
