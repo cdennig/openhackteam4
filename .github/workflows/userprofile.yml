@@ -66,6 +66,16 @@ jobs:
         docker login ${{ env.container-registry }} --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }}
         docker build -t ${{ env.container-registry }}/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }} .
         docker push ${{ env.container-registry }}/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }}
+  staging:
+    needs: [build]
+    runs-on: ubuntu-latest
+    env:
+        app-name: openhackf4r03460userprofile
+        image-name: userprofile
+        container-registry: docker.pkg.github.com
+        docker-username: "cdennig"
+    if: github.ref == 'refs/heads/master'
+    steps:
     - name: 'Login via Azure CLI'
       uses: azure/login@v1
       with:
@@ -101,8 +111,17 @@ jobs:
     - name: Staging healthy?
       run: |
         ./test.sh https://openhackf4r03460userprofile-staging.azurewebsites.net/api/healthcheck/user
+  production:
+    needs: [staging]
+    runs-on: ubuntu-latest
+    env:
+        app-name: openhackf4r03460userprofile
+        image-name: userprofile
+        container-registry: docker.pkg.github.com
+        docker-username: "cdennig"
+    # if: ${{ success() }}
+    steps:      
     - name: Swap slots
-      if: ${{ success() }}
       uses: azure/CLI@v1
       with:
         azcliversion: 2.11.1
