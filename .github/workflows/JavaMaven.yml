@@ -88,10 +88,4 @@ jobs:
         app-name: ${{ env.app-name }}
         slot-name: 'staging'
         images: '${{ env.container-registry }}/cdennig/openhackteam4/${{ env.image-name }}:${{ github.sha }}'
-     - name: Swap slots
-       uses: azure/CLI@v1
-       with:
-         azcliversion: 2.11.1
-         inlineScript: |
-        az webapp deployment slot swap --name openhackf4r03460userjava --resource-group openhackf4r03460rg --slot staging --target-slot production
         
