@@ -35,7 +35,7 @@ jobs:
       run: dotnet build --configuration Release --no-restore apis/poi/web/poi.csproj
 #    - working-directory: ${{env.working-directory}} 
     - name: Test
-      run: dotnet test --no-restore --verbosity normal apis/poi/tests/UnitTests/UnitTests.csproj
+      run: dotnet test --no-restore --verbosity normal --logger "console;verbosity=detailed" apis/poi/tests/UnitTests/UnitTests.csproj
     - uses: actions/github-script@0.9.0
       if: failure()
       with:
