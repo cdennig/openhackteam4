@@ -14,11 +14,7 @@ on:
 
 jobs:
   test:
-
     runs-on: ubuntu-latest
-    env:
-      working-directory: apis/poi/web
-
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
@@ -27,13 +23,10 @@ jobs:
         dotnet-version: 3.1.301
     - name: show folder
       run: pwd
-#    - working-directory: ${{env.working-directory}}
     - name: Install dependencies
       run: dotnet restore apis/poi/web/poi.csproj
-#    - working-directory: ${{env.working-directory}}
     - name: Build
       run: dotnet build --configuration Release --no-restore apis/poi/web/poi.csproj
-#    - working-directory: ${{env.working-directory}} 
     - name: Test
       run: dotnet test --no-restore --verbosity normal --logger "console;verbosity=detailed" apis/poi/tests/UnitTests/UnitTests.csproj
     - uses: actions/github-script@0.9.0
@@ -124,3 +117,33 @@ jobs:
             title: "${{ env.build_name }} Workflow ${{ github.run_number }} Failed! Error in staging slot of API.",
             body: body
           });
+  production:
+    needs: [staging]
+    runs-on: ubuntu-latest
+    env:
+        app-name: openhackf4r03460poi
+        image-name: poi
+        container-registry: docker.pkg.github.com
+        docker-username: "cdennig"
+    steps:
+    - uses: actions/checkout@v2      
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}  
+    - name: Swap slots
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.11.1
+        inlineScript: |
+          az webapp deployment slot swap --name openhackf4r03460poi --resource-group openhackf4r03460rg --slot staging --target-slot production
+    - name: Production healthy?
+      run: |
+        ./test.sh https://openhackf4r03460poi.azurewebsites.net/api/healthcheck/poi
+    - name: Rollback
+      if: ${{ failure() }}
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.11.1
+        inlineScript: |
+          az webapp deployment slot swap --name openhackf4r03460poi --resource-group openhackf4r03460rg --slot staging --target-slot production        
