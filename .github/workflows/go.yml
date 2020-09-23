@@ -66,6 +66,7 @@ jobs:
         app-name: openhackf4r03460trips
         image-name: trips
         container-registry: docker.pkg.github.com
+        docker-username: "cdennig"
     if: github.ref == 'refs/heads/master'
     steps:
     - uses: actions/checkout@v2    
@@ -97,7 +98,7 @@ jobs:
              },
              {
                  "name": "DOCKER_REGISTRY_SERVER_USERNAME",
-                 "value": "${{ github.actor }}",
+                 "value": "${{ env.docker-username }}",
                  "slotSetting": false
              }
          ]
