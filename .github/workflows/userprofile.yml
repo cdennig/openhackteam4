@@ -6,6 +6,9 @@ name: Node.js CI
 on:
   push:
     branches: [ master ]
+    paths: 
+      - 'apis/userprofile/**'
+      - '.github/workflows/userprofile.yml'
   pull_request:
     branches: [ master ]
     paths: 
