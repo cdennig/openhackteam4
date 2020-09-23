@@ -46,6 +46,7 @@ jobs:
             body: body
           });
   build:
+    needs: [test]
     runs-on: ubuntu-latest
     env:
         working-directory: ./apis/userprofile
@@ -56,8 +57,8 @@ jobs:
       working-directory: ${{ env.working-directory }}
       run: |
         docker login docker.pkg.github.com --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }}
-        docker build -t docker.pkg.github.com/cdennig/openhackteam4/userprofile:${{ github.GITHUB_RUN_ID }} .
-        docker push docker.pkg.github.com/cdennig/openhackteam4/userprofile:${{ github.GITHUB_RUN_ID }}
+        docker build -t docker.pkg.github.com/cdennig/openhackteam4/userprofile:${{ env.GITHUB_RUN_ID }} .
+        docker push docker.pkg.github.com/cdennig/openhackteam4/userprofile:${{ env.GITHUB_RUN_ID }}
     - name: 'Login via Azure CLI'
       uses: azure/login@v1
       with:
