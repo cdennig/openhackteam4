@@ -121,7 +121,11 @@ jobs:
         container-registry: docker.pkg.github.com
         docker-username: "cdennig"
     steps:
-    - uses: actions/checkout@v2        
+    - uses: actions/checkout@v2      
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}  
     - name: Swap slots
       uses: azure/CLI@v1
       with:
