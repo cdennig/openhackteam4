@@ -1,6 +1,6 @@
 {
     "name": "mydriving-user-api",
-    "description": "This is the User API for the MyDriving service",
+    "description": "This is t. User API for the MyDriving service",
     "version": "1.0.0",
     "repository": {
         "type": "git",
